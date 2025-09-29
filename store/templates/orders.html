@@ -1,0 +1,19 @@
+<h2>My Orders</h2>
+{% if orders %}
+  {% for order in orders %}
+    <div class="order">
+      <h3>Order #{{ order.id }} ({{ order.status }})</h3>
+      <p>Total: ₨ {{ order.total_price }}</p>
+      <p>Address: {{ order.address }}</p>
+      <p>Phone: {{ order.phone }}</p>
+
+      <ul>
+        {% for item in order.items.all %}
+          <li>{{ item.product.name }} (x{{ item.quantity }}) - ₨ {{ item.price }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>No orders found.</p>
+{% endif %}

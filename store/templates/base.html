@@ -1,0 +1,656 @@
+<!-- shop/templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}EliteShop - Premium E-Commerce{% endblock %}</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+
+  <style>
+    * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  line-height: 1.6;
+  color: #333;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Styles */
+header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 0;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 9999; /* keeps above banner */
+  overflow: hidden;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 2;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 28px;
+  font-weight: 700;
+  text-decoration: none;
+  color: #fff;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo i {
+  font-size: 32px;
+  background: linear-gradient(45deg, #ffd700, #ffed4e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Navbar */
+nav {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  position: relative;
+  z-index: 9999; /* stays above banner */
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 20px;
+  padding: 12px 24px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+nav a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+nav a:hover::before {
+  left: 100%;
+}
+
+nav a:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.cart-icon {
+  position: relative;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4757;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Menu Toggle */
+.menu-toggle {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #fff;
+  z-index: 10000; /* always clickable */
+}
+
+/* Banner Section */
+.banner {
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+              url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  width:100%;
+  
+
+}
+
+
+.banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.banner:hover::before {
+  opacity: 1;
+}
+
+.banner-content {
+  position: relative;
+  z-index: 2;
+  max-width: 600px;
+  padding: 0 20px;
+  transform: translateY(20px);
+  transition: transform 0.5s ease;
+}
+
+.banner:hover .banner-content {
+  transform: translateY(0);
+}
+
+.banner h2 {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-shadow: 0 4px 15px rgba(92, 90, 90, 0.99);
+  color: #fff;
+}
+
+.banner p {
+  font-size: 20px;
+  margin-bottom: 30px;
+  opacity: 0.9;
+}
+
+.cta-button {
+  display: inline-block;
+  background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+  color: white;
+  padding: 15px 40px;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 18px;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(238, 90, 36, 0.4);
+}
+
+.cta-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(238, 90, 36, 0.6);
+  background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 15px;
+  flex: 1;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* Footer Styles */
+footer {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: #ecf0f1;
+  margin-top: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px 15px 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+}
+
+.footer-section h3 {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.footer-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  border-radius: 2px;
+}
+
+.footer-section p, .footer-section li {
+  color: #bdc3c7;
+  margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.footer-section ul {
+  list-style: none;
+}
+
+.footer-section ul li a {
+  color: #bdc3c7;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.footer-section ul li a:hover {
+  color: #3498db;
+  transform: translateX(5px);
+}
+
+.social-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: rgba(255,255,255,0.1);
+  color: #bdc3c7;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 18px;
+}
+
+.social-links a:hover {
+  background: #3498db;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.newsletter {
+  background: rgba(255,255,255,0.05);
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.newsletter-form input {
+  flex: 1;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 14px;
+}
+
+.newsletter-form input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+.newsletter-form button {
+  padding: 12px 25px;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 25px 0;
+  text-align: center;
+  background: rgba(0,0,0,0.2);
+}
+
+.footer-bottom-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.payment-methods {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.payment-methods i {
+  font-size: 24px;
+  color: #bdc3c7;
+  transition: color 0.3s ease;
+}
+
+.payment-methods i:hover {
+  color: #3498db;
+}
+
+/* Search Bar */
+.navbar-search {
+  margin-left: 20px;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 25px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+}
+
+.search-wrapper:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.search-wrapper input[type="text"] {
+  padding: 8px 16px;
+  border: none;
+  outline: none;
+  width: 200px;
+  font-size: 14px;
+  color: #333;
+}
+
+.search-wrapper input[type="text"]::placeholder {
+  color: #999;
+}
+
+.search-wrapper button {
+  background: #e63946;
+  border: none;
+  padding: 0 16px;
+  cursor: pointer;
+  color: #fff;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+}
+
+.search-wrapper button:hover {
+  background: #c92c3d;
+}
+
+.search-wrapper i {
+  font-size: 14px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.footer-section {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.footer-section:nth-child(1) { animation-delay: 0.1s; }
+.footer-section:nth-child(2) { animation-delay: 0.2s; }
+.footer-section:nth-child(3) { animation-delay: 0.3s; }
+.footer-section:nth-child(4) { animation-delay: 0.4s; }
+
+/* --- Mobile Styling --- */
+/* --- Mobile Styling --- */
+@media (max-width: 768px) {
+  nav {
+    flex-wrap: nowrap;      /* keeps items in a row */
+    overflow-x: auto;       /* ✅ allows horizontal scroll if too many items */
+    -webkit-overflow-scrolling: touch;
+    gap: 15px;
+  }
+
+  nav a {
+    font-size: 16px;
+    padding: 10px 16px;
+    white-space: nowrap;    /* ✅ prevents breaking */
+  }
+
+  .menu-toggle {
+    display: none;          /* ✅ no toggler */
+  }
+}
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+
+
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <a href="{% url 'home' %}" class="logo">
+        <i class="fas fa-gem"></i>
+        EliteShop
+      </a>
+ 
+<!-- Mobile toggle -->
+    <span class="menu-toggle"><i class="fas fa-bars"></i></span>
+      <nav id="navbar">
+         <form action="{% url 'product_search' %}" method="get" class="navbar-search">
+        <input type="text" name="q" placeholder="Search..." required>
+        <button type="submit"><i class="fas fa-search"></i></button>
+         </form>
+  
+        <a href="{% url 'home' %}"><i class="fas fa-home"></i> </a>
+         <a href="{% url 'cart_detail' %}" class="cart-link">
+    🛒 
+    <span class="cart-count">
+      {{ request.session.cart|length|default:0 }}
+    </span>
+  </a>
+   <a href="{% url 'profile' %}">
+        <i class="fas fa-user-circle"></i> 
+      </a>
+
+        <a href="login/"><i class="fas fa-user"></i> </a>
+        <a href="{% url 'logout' %}" title="Logout" style="color: red; font-size: 20px; margin-left: 15px;">
+  <i class="fas fa-sign-out-alt"></i>
+</a>
+
+      </nav>
+    </div>
+  </header>
+
+  <section class="banner">
+    <div class="banner-content">
+      <h2>Premium Shopping Experience</h2>
+      <p>Discover exclusive products with unmatched quality and style</p>
+      <a href="{% url 'home' %}" class="cta-button">Shop Now</a>
+
+    </div>
+  </section>
+
+  <div class="container">
+    {% block content %}
+    {% endblock %}
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About EliteShop</h3>
+        <p>Your premier destination for high-quality products and exceptional shopping experience. We curate the finest selection of items to meet your lifestyle needs.</p>
+        <div class="social-links">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">New Arrivals</a></li>
+          <li><a href="#">Best Sellers</a></li>
+          <li><a href="#">Sale Items</a></li>
+          <li><a href="#">Gift Cards</a></li>
+          <li><a href="#">Size Guide</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section">
+        <h3>Customer Service</h3>
+        <ul>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Shipping Info</a></li>
+          <li><a href="#">Returns & Exchanges</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Track Your Order</a></li>
+        </ul>
+      </div>
+      
+      <div class="footer-section newsletter">
+        <h3>Stay Updated</h3>
+        <p>Subscribe to our newsletter for exclusive offers and latest updates.</p>
+        <form class="newsletter-form">
+          <input type="email" placeholder="Enter your email address" required>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <div class="footer-bottom-content">
+        <p>&copy; 2025 EliteShop. All rights reserved. | Privacy Policy | Terms of Service</p>
+        <div class="payment-methods">
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
+          <i class="fab fa-cc-paypal"></i>
+          <i class="fab fa-cc-apple-pay"></i>
+          <i class="fab fa-cc-stripe"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
+ <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const menuToggle = document.querySelector(".menu-toggle i");
+    const nav = document.getElementById("navbar");
+
+    // Toggle navbar
+    menuToggle.parentElement.addEventListener("click", function () {
+      nav.classList.toggle("show");
+      if (nav.classList.contains("show")) {
+        menuToggle.classList.replace("fa-bars", "fa-times"); // change to X
+      } else {
+        menuToggle.classList.replace("fa-times", "fa-bars"); // back to bars
+      }
+    });
+
+    // Close navbar when clicking a link
+    nav.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", () => {
+        nav.classList.remove("show");
+        menuToggle.classList.replace("fa-times", "fa-bars");
+      });
+    });
+
+    // Close if clicking outside
+    document.addEventListener("click", function (e) {
+      if (!menuToggle.parentElement.contains(e.target) && !nav.contains(e.target)) {
+        nav.classList.remove("show");
+        menuToggle.classList.replace("fa-times", "fa-bars");
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="profile-page-container">
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <h2>My Profile</h2>
+    <form id="profile-form" method="post">
+      {% csrf_token %}
+
+      <!-- Account Info -->
+      <div class="form-section">
+        <h3>Account Info</h3>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value="{{ request.user.username }}">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ request.user.email }}">
+      </div>
+
+      <!-- Profile Info -->
+      <div class="form-section">
+        <h3>Profile Info</h3>
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" name="phone" value="{{ request.user.userprofile.phone }}">
+        <label for="address">Address</label>
+        <textarea id="address" name="address">{{ request.user.userprofile.address }}</textarea>
+      </div>
+
+      <button type="submit" class="btn-update">Update Profile</button>
+      <div id="update-msg" class="update-message"></div>
+    </form>
+  </div>
+
+  <!-- Orders Card -->
+  <div class="orders-card">
+    <h2>My Orders</h2>
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Date</th>
+          <th>Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="orders-body">
+        {% for order in orders %}
+        <tr>
+          <td>#{{ order.id }}</td>
+          <td>{{ order.created_at|date:"d M Y H:i" }}</td>
+          <td>₨ {{ order.total_price|floatformat:0 }}</td>
+          <td>
+            {% if order.status == 'Delivered' %}
+              <span class="status delivered">{{ order.status }}</span>
+            {% elif order.status == 'Cancelled' %}
+              <span class="status cancelled">{{ order.status }}</span>
+            {% elif order.status == 'Shipped' %}
+              <span class="status shipped">{{ order.status }}</span>
+            {% else %}
+              <span class="status pending">{{ order.status }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+// ----------------------
+// AJAX Profile Update
+// ----------------------
+const profileForm = document.getElementById('profile-form');
+profileForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  const formData = new FormData(profileForm);
+  
+  fetch("{% url 'profile' %}", {
+    method: "POST",
+    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    const msgDiv = document.getElementById('update-msg');
+    if(data.success){
+      msgDiv.innerText = "✅ Profile updated successfully!";
+      msgDiv.style.color = "#2a9d8f";
+    } else {
+      msgDiv.innerText = "⚠️ " + data.error;
+      msgDiv.style.color = "#e63946";
+    }
+  });
+});
+
+// ----------------------
+// Dynamic Orders & Profile Refresh
+// ----------------------
+function fetchProfileData() {
+    fetch("{% url 'profile_data' %}")
+    .then(res => res.json())
+    .then(data => {
+        // Update account info
+        document.getElementById("username").value = data.user_info.username;
+        document.getElementById("email").value = data.user_info.email;
+        // Update profile info
+        document.getElementById("phone").value = data.user_info.phone;
+        document.getElementById("address").value = data.user_info.address;
+
+        // Update orders table
+        const tbody = document.getElementById("orders-body");
+        tbody.innerHTML = "";
+        data.orders.forEach(order => {
+            let statusClass = "pending";
+            if(order.status == "Delivered") statusClass = "delivered";
+            else if(order.status == "Cancelled") statusClass = "cancelled";
+            else if(order.status == "Shipped") statusClass = "shipped";
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>#${order.id}</td>
+                <td>${order.created_at}</td>
+                <td>₨ ${order.total_price.toFixed(0)}</td>
+                <td><span class="status ${statusClass}">${order.status}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+}
+// Auto-refresh every 10 seconds
+setInterval(fetchProfileData, 10000);
+fetchProfileData();
+</script>
+
+<style>
+.profile-page-container {
+  max-width: 900px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Cards */
+.profile-card, .orders-card {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.profile-card h2, .orders-card h2 {
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 25px;
+}
+
+/* Form Section */
+.form-section h3 {
+  color: #333;
+  margin-bottom: 10px;
+}
+.form-section label {
+  display: block;
+  font-weight: 500;
+  margin: 8px 0 3px;
+}
+.form-section input, .form-section textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  margin-bottom: 12px;
+  color: #111;
+}
+
+/* Update Button */
+.btn-update {
+  display: block;
+  margin: 20px auto 0;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 8px;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.btn-update:hover { background: #155ab6; }
+
+/* Update message */
+.update-message {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Orders Table */
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.orders-table th, .orders-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.orders-table th {
+  background: #f7f7f7;
+  color: #111;
+}
+
+/* Status badges */
+.status {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+}
+.status.delivered { background: #2a9d8f; }
+.status.cancelled { background: #e63946; }
+.status.shipped { background: #f4a261; }
+.status.pending { background: #457b9d; }
+</style>
+{% endblock %}

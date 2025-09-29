@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Order Placed - EliteShop{% endblock %}
+
+{% block content %}
+<div class="order-success">
+  <h2>Thank you! Your order has been placed.</h2>
+  <p>Order ID: {{ order.id }}</p>
+  <p>Total: ₨ {{ order.total_price|floatformat:0 }}</p>
+  <p>Status: {{ order.status }}</p>
+  <p>We will contact you at {{ order.phone }}.</p>
+  <a href="{%url 'profile'%}">Track Your Order</a>
+  <a href="{% url 'home' %}">Continue Shopping</a>
+</div>
+
+<style>
+.order-success {
+    max-width: 500px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 25px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.order-success h2 {
+    color: #28a745;
+    margin-bottom: 15px;
+}
+.order-success a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 8px 15px;
+    background: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+}
+.order-success a:hover {
+    background: #0069d9;
+}
+</style>
+{% endblock %}

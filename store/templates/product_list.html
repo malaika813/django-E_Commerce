@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} - EliteShop{% endblock %}
+
+{% block content %}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 15px;
+    }
+
+    h2 {
+      color: #333;
+      margin: 10px 0 20px 5px;
+    }
+
+    /* Product grid responsive */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+      padding: 12px;
+      transition: transform 0.2s;
+      text-align: center;
+    }
+
+    .product-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .product-info {
+      padding: 10px 4px;
+    }
+
+    .product-info h3 {
+      font-size: 16px;
+      margin: 8px 0;
+      color: #222;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .price {
+      font-size: 16px;
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      color: #888;
+      margin-left: 6px;
+      font-size: 14px;
+    }
+
+    /* --- Responsive Navbar --- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #111;
+      padding: 10px 20px;
+    }
+
+    .navbar .logo {
+      color: #ff4c4c;
+      font-weight: bold;
+      font-size: 20px;
+      text-decoration: none;
+    }
+
+    .navbar .menu {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin: 0 10px;
+      font-size: 15px;
+    }
+
+    .navbar a:hover {
+      color: #ff4c4c;
+    }
+
+    .navbar-toggle {
+      display: none;
+      font-size: 22px;
+      color: white;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1024px) {
+      .product-card img {
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      }
+
+      .product-card img {
+        height: 180px;
+      }
+
+      .navbar .menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: #111;
+        margin-top: 10px;
+      }
+
+      .navbar .menu.active {
+        display: flex;
+      }
+
+      .navbar-toggle {
+        display: block;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .product-grid {
+        grid-template-columns: 1fr; /* 1 per row on very small screens */
+      }
+
+      .product-card img {
+        height: 200px;
+      }
+    }
+  </style>
+
+  
+
+  {% if query %}
+  <h3 style="margin:15px;">Search results for "{{ query }}"</h3>
+  {% endif %}
+
+  <div class="container">
+    <h2>Latest Products</h2>
+    <div class="product-grid">
+      {% for product in products %}
+      <div class="product-card">
+        <a href="{% url 'product_detail' product.id %}">
+          <img src="{{ product.image_url }}" alt="{{ product.name }}">
+        </a>
+        <div class="product-info">
+          <h3>{{ product.name }}</h3>
+          <div>
+            <span class="price">Rs. {{ product.price }}</span>
+            {% if product.original_price %}
+              <span class="original-price">Rs. {{ product.original_price }}</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Navbar toggle script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const toggle = document.querySelector(".navbar-toggle");
+      const menu = document.querySelector(".navbar .menu");
+
+      toggle.addEventListener("click", function() {
+        menu.classList.toggle("active");
+      });
+    });
+  </script>
+{% endblock %}

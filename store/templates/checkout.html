@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - EliteShop{% endblock %}
+
+{% block content %}
+<div class="checkout-container">
+  <h2>Checkout</h2>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      <label for="full_name">Full Name</label>
+      <input type="text" name="full_name" id="full_name" required
+             value="{{ full_name|default_if_none:'' }}">
+    </div>
+
+    <div>
+      <label for="phone">Phone Number</label>
+      <input type="text" name="phone" id="phone" required
+             value="{{ phone|default_if_none:'' }}">
+    </div>
+
+    <div>
+      <label for="address">Address</label>
+      <textarea name="address" id="address" rows="4" required>{{ address|default_if_none:'' }}</textarea>
+    </div>
+
+    <h3>Order Summary</h3>
+    <ul>
+      {% for item in cart %}
+      <li>{{ item.name }} × {{ item.quantity }} = ₨ {{ item.total_price|floatformat:0 }}</li>
+      {% endfor %}
+    </ul>
+
+    <p>Total: ₨ {{ cart.get_total_price|floatformat:0 }}</p>
+
+    <button type="submit">Place Order</button>
+  </form>
+</div>
+
+<style>
+.checkout-container {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.checkout-container h2 { margin-bottom: 20px; color: #333; }
+.checkout-container div { margin-bottom: 15px; }
+.checkout-container label { display: block; margin-bottom: 5px; font-weight: bold; }
+.checkout-container input, .checkout-container textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+.checkout-container button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; }
+.checkout-container button:hover { background: #218838; }
+.message { margin-bottom: 15px; padding: 10px; border-radius: 4px; }
+.message.error { background: #f8d7da; color: #721c24; }
+.message.warning { background: #fff3cd; color: #856404; }
+
+/* --- Responsive Enhancements for Checkout Page --- */
+@media (max-width: 992px) {
+  .checkout-container {
+    margin: 20px 15px;
+    padding: 20px;
+  }
+
+  .checkout-container h2 {
+    font-size: 26px;
+  }
+
+  .checkout-container button {
+    font-size: 15px;
+    padding: 10px 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkout-container {
+    margin: 15px 10px;
+    padding: 15px;
+  }
+
+  .checkout-container h2 {
+    font-size: 24px;
+  }
+
+  .checkout-container input,
+  .checkout-container textarea {
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  .checkout-container button {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .checkout-container ul {
+    padding-left: 15px;
+    font-size: 14px;
+  }
+
+  .checkout-container p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .checkout-container {
+    margin: 10px 5px;
+    padding: 12px;
+  }
+
+  .checkout-container h2 {
+    font-size: 20px;
+  }
+
+  .checkout-container label {
+    font-size: 14px;
+  }
+
+  .checkout-container input,
+  .checkout-container textarea {
+    padding: 5px;
+    font-size: 13px;
+  }
+
+  .checkout-container button {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .checkout-container ul {
+    font-size: 13px;
+  }
+
+  .checkout-container p {
+    font-size: 14px;
+  }
+}
+
+</style>
+{% endblock %}
