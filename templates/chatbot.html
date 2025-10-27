@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Career Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .chat-container {
+      width: 420px;
+      height: 550px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .chat-box {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .message {
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .user {
+      text-align: right;
+      color: #0078d7;
+    }
+    .ai {
+      text-align: left;
+      color: #333;
+    }
+    .input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 0 0 0 12px;
+      outline: none;
+    }
+    button {
+      background: #0078d7;
+      color: white;
+      border: none;
+      padding: 12px 16px;
+      border-radius: 0 0 12px 0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chat-box">
+      <div class="message ai"><strong>AI:</strong> Hello! 👋 How can I help you today?</div>
+    </div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const chatBox = document.getElementById("chat-box");
+      const message = input.value.trim();
+      if (!message) return;
+
+      // Display user message
+      chatBox.innerHTML += `<div class='message user'><strong>You:</strong> ${message}</div>`;
+      input.value = "";
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Send to backend
+      const response = await fetch("/chat-api/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      const reply = data.reply;
+
+      // Display AI message
+      chatBox.innerHTML += `<div class='message ai'><strong>AI:</strong> ${reply}</div>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    // Send message on Enter key
+    document.getElementById("user-input").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
